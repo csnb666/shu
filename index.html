@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>企业电子书</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            background:#dac9b4;
+            font-family:Georgia,'Times New Roman','宋体',serif;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:16px;
+        }
+        .card{
+            max-width:400px;
+            width:100%;
+            background:#fcf7ef;
+            border:1px solid #b99f7c;
+            box-shadow:0 20px 35px rgba(0,0,0,0.3);
+            padding:25px;
+            text-align:center;
+            cursor:pointer;
+            transition:0.1s;
+        }
+        .card:active{transform:scale(0.98);}
+        .card-img{
+            width:100%;
+            aspect-ratio:3/4;
+            background:#e5d7c4;
+            border:1px solid #b99f7c;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            margin-bottom:20px;
+        }
+        #cardImg{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            background:#e5d7c4;
+        }
+        .book-title{
+            font-size:2.2rem;
+            font-weight:normal;
+            color:#4f3f2b;
+            letter-spacing:4px;
+            border-top:1px dashed #b99f7c;
+            border-bottom:1px dashed #b99f7c;
+            padding:15px 0;
+            margin-top:5px;
+        }
+        .reader{
+            max-width:650px;
+            width:100%;
+            background:#fcf7ef;
+            border:1px solid #b99f7c;
+            box-shadow:0 15px 30px rgba(0,0,0,0.2);
+            padding:25px 20px;
+            display:none;
+        }
+        .reader.full{
+            max-width:100%;
+            min-height:100vh;
+            background:#0f0f0f;
+            border:none;
+            box-shadow:none;
+            padding:0;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+        }
+        .img-area{
+            background:#f2eadb;
+            border:1px solid #cbb392;
+            padding:12px;
+            margin-bottom:15px;
+        }
+        .reader.full .img-area{
+            background:#0f0f0f;
+            border:none;
+            margin-bottom:0;
+            padding:0;
+            height:100vh;
+            display:flex;
+            align-items:center;
+        }
+        .img-frame{
+            width:100%;
+            aspect-ratio:3/4;
+            background:#e1d3bf;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+        }
+        .reader.full .img-frame{
+            aspect-ratio:auto;
+            height:100%;
+            background:#0f0f0f;
+        }
+        #bookImg{
+            width:100%;
+            height:100%;
+            object-fit:contain;
+            background:#e1d3bf;
+        }
+        .reader.full #bookImg{
+            background:#0f0f0f;
+        }
+        .info{
+            background:#efe5d5;
+            padding:12px 16px;
+            margin:15px 0;
+            border-left:6px solid #9f855c;
+            font-size:1rem;
+            color:#2f2a1f;
+            min-height:70px;
+        }
+        .reader.full .info{display:none;}
+        .tools{
+            background:#f4ecdf;
+            padding:18px;
+        }
+        .reader.full .tools{display:none;}
+        .select-line{
+            display:flex;
+            gap:10px;
+            align-items:center;
+            margin-bottom:20px;
+            flex-wrap:wrap;
+        }
+        .label{
+            background:#d6c4ab;
+            padding:8px 16px;
+            color:#2f281b;
+            font-weight:500;
+            border:1px solid #b59872;
+        }
+        #pageSelect{
+            flex:1;
+            min-width:160px;
+            padding:12px 20px;
+            background:white;
+            border:1px solid #b59872;
+            font-size:1rem;
+            color:#1f1a14;
+            appearance:none;
+            background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%237a5f3e" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat:no-repeat;
+            background-position:right 12px center;
+            background-size:14px;
+            border-radius:0;
+        }
+        #pageSelect:focus{outline:none;border-color:#4f3f2b;}
+        #startBtn{
+            background:#9f8560;
+            border:none;
+            color:white;
+            font-weight:600;
+            padding:12px 30px;
+            font-size:1.1rem;
+            border:1px solid #6e5639;
+            cursor:pointer;
+            box-shadow:0 5px 0 #5e4a30;
+            transition:0.03s;
+            letter-spacing:1px;
+        }
+        #startBtn:active{
+            transform:translateY(4px);
+            box-shadow:0 1px 0 #5e4a30;
+        }
+        .nav-line{
+            display:flex;
+            gap:15px;
+            justify-content:center;
+            margin:15px 0 10px;
+        }
+        .nav-btn{
+            background:#dac9b2;
+            border:1px solid #b89b78;
+            color:#2a241b;
+            font-size:1.3rem;
+            padding:14px 0;
+            text-align:center;
+            cursor:pointer;
+            flex:1;
+            max-width:150px;
+            box-shadow:0 4px 0 #9c8465;
+            transition:0.03s;
+        }
+        .nav-btn:active{
+            transform:translateY(3px);
+            box-shadow:0 1px 0 #9c8465;
+        }
+        .nav-btn:disabled{
+            opacity:0.4;
+            transform:none;
+            box-shadow:0 3px 0 #9c8465;
+            pointer-events:none;
+        }
+        .page-num{
+            text-align:center;
+            font-size:1rem;
+            color:#4f3f2b;
+            background:#e5d8c4;
+            padding:10px;
+            border:1px solid #c9b087;
+            margin-top:12px;
+            font-family:monospace;
+        }
+        .full-nav{
+            position:fixed;
+            bottom:30px;
+            left:0;
+            right:0;
+            display:flex;
+            justify-content:center;
+            gap:60px;
+            opacity:0;
+            pointer-events:none;
+            transition:opacity 0.15s;
+            z-index:10;
+        }
+        .reader.full .full-nav{
+            opacity:1;
+            pointer-events:auto;
+        }
+        .full-btn{
+            background:rgba(40,40,40,0.85);
+            border:1px solid #6a6a6a;
+            color:white;
+            font-size:2rem;
+            padding:18px 36px;
+            border-radius:50px;
+            backdrop-filter:blur(4px);
+            cursor:pointer;
+            min-width:130px;
+            text-align:center;
+            box-shadow:0 5px 15px rgba(0,0,0,0.5);
+        }
+        .full-btn:active{background:#3f3f3f;}
+        .full-btn:disabled{
+            opacity:0.2;
+            pointer-events:none;
+        }
+        .exit-full{
+            position:fixed;
+            top:25px;
+            right:25px;
+            background:rgba(40,40,40,0.85);
+            border:1px solid #6a6a6a;
+            color:white;
+            font-size:1.2rem;
+            padding:12px 24px;
+            border-radius:40px;
+            backdrop-filter:blur(4px);
+            cursor:pointer;
+            z-index:11;
+            display:none;
+        }
+        .reader.full .exit-full{display:block;}
+        @media (max-width:500px){
+            .select-line{flex-direction:column;align-items:stretch;}
+            .full-btn{padding:14px 20px;min-width:80px;font-size:1.5rem;}
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="entryCard">
+        <div class="card-img">
+            <img id="cardImg" src="bj.jpg" alt="cover">
+        </div>
+        <div class="book-title">网页设计与开发</div>
+    </div>
+    <div class="reader" id="readerPage">
+        <div class="img-area">
+            <div class="img-frame">
+                <img id="bookImg" src="bj.jpg" alt="page">
+            </div>
+        </div>
+        <div class="info" id="infoMsg">共351页 · 请选择页码</div>
+        <div class="tools">
+            <div class="select-line">
+                <span class="label">页码</span>
+                <select id="pageSelect">
+                    <option value="0">封面</option>
+                </select>
+                <button id="startBtn">开始阅读</button>
+            </div>
+            <div class="nav-line">
+                <button class="nav-btn" id="prevBtn">〈 上一页</button>
+                <button class="nav-btn" id="nextBtn">下一页 〉</button>
+            </div>
+            <div class="page-num" id="pageDisplay">封面</div>
+        </div>
+        <div class="full-nav">
+            <button class="full-btn" id="fullPrev">〈</button>
+            <button class="full-btn" id="fullNext">〉</button>
+        </div>
+        <button class="exit-full" id="exitFull">退出</button>
+    </div>
+    <script>
+        (function(){
+            const card = document.getElementById('entryCard');
+            const reader = document.getElementById('readerPage');
+            const cardImg = document.getElementById('cardImg');
+            const bookImg = document.getElementById('bookImg');
+            const select = document.getElementById('pageSelect');
+            const startBtn = document.getElementById('startBtn');
+            const prev = document.getElementById('prevBtn');
+            const next = document.getElementById('nextBtn');
+            const fullPrev = document.getElementById('fullPrev');
+            const fullNext = document.getElementById('fullNext');
+            const exit = document.getElementById('exitFull');
+            const pageDisplay = document.getElementById('pageDisplay');
+            const info = document.getElementById('infoMsg');
+            const TOTAL = 351;
+            for(let i=1;i<=TOTAL;i++){
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = '第 '+i+' 页';
+                select.appendChild(opt);
+            }
+            const LAST_KEY = 'ebook_last';
+            const MISS_KEY = 'ebook_missing';
+            function getLast(){
+                try{
+                    const v = localStorage.getItem(LAST_KEY);
+                    if(v){
+                        const p = parseInt(v,10);
+                        if(!isNaN(p) && p>=0 && p<=TOTAL) return p;
+                    }
+                }catch(e){}
+                return 0;
+            }
+            function setLast(p){
+                try{
+                    if(p>=1 && p<=TOTAL) localStorage.setItem(LAST_KEY,p);
+                    else if(p===0) localStorage.removeItem(LAST_KEY);
+                }catch(e){}
+            }
+            function getMissing(){
+                try{
+                    const d = localStorage.getItem(MISS_KEY);
+                    if(d){
+                        const arr = JSON.parse(d);
+                        if(Array.isArray(arr)) return new Set(arr.filter(n=>n>=1&&n<=TOTAL));
+                    }
+                }catch(e){}
+                return new Set();
+            }
+            function saveMissing(s){
+                try{
+                    const arr = Array.from(s).filter(n=>n>=1&&n<=TOTAL);
+                    localStorage.setItem(MISS_KEY,JSON.stringify(arr));
+                }catch(e){}
+            }
+            let missing = getMissing();
+            let current = 0;
+            function updateUI(page){
+                select.value = page;
+                if(page===0) pageDisplay.textContent = '封面';
+                else pageDisplay.textContent = '第 '+page+' 页 / 共 '+TOTAL+' 页';
+                const prevDis = (page===0)?true:(page<=1);
+                const nextDis = (page===0)?(TOTAL<1):(page>=TOTAL);
+                prev.disabled = prevDis;
+                next.disabled = nextDis;
+                fullPrev.disabled = prevDis;
+                fullNext.disabled = nextDis;
+            }
+            function setMsg(text,warn){
+                info.textContent = text;
+                info.style.borderLeftColor = warn?'#b5673a':'#9f855c';
+            }
+            function loadPage(page){
+                if(page<0||page>TOTAL) return;
+                const req = page;
+                const src = page===0?'bj.jpg':page+'.jpg';
+                bookImg.onload = null;
+                bookImg.onerror = null;
+                bookImg.onload = function(){
+                    if(req>=1){
+                        if(missing.has(req)){
+                            missing.delete(req);
+                            saveMissing(missing);
+                            setMsg('第 '+req+' 页已更新',true);
+                        }else{
+                            setMsg('第 '+req+' 页',false);
+                        }
+                        setLast(req);
+                    }else{
+                        setMsg('封面',false);
+                        setLast(0);
+                    }
+                    current = req;
+                    updateUI(current);
+                };
+                bookImg.onerror = function(){
+                    if(req>=1){
+                        if(!missing.has(req)){
+                            missing.add(req);
+                            saveMissing(missing);
+                            setMsg('第 '+req+' 页目前还没有更新，请等待后续更新...',true);
+                        }else{
+                            setMsg('第 '+req+' 页暂缺，请等待后续更新...',true);
+                        }
+                        setLast(req);
+                    }else{
+                        setMsg('封面文件不存在',true);
+                        setLast(0);
+                    }
+                    current = req;
+                    updateUI(current);
+                };
+                bookImg.src = src;
+                current = req;
+                updateUI(current);
+            }
+            card.addEventListener('click',function(){
+                card.style.display = 'none';
+                reader.style.display = 'block';
+                loadPage(getLast());
+            });
+            select.addEventListener('change',function(){
+                const val = select.value;
+                if(val==='') return;
+                const p = parseInt(val,10);
+                if(!isNaN(p) && p>=0 && p<=TOTAL){
+                    loadPage(p);
+                }
+            });
+            startBtn.addEventListener('click',function(){
+                reader.classList.add('full');
+            });
+            prev.addEventListener('click',function(){
+                let p = current-1;
+                if(p<0) p=0;
+                loadPage(p);
+            });
+            next.addEventListener('click',function(){
+                let p = current+1;
+                if(p>TOTAL) p=TOTAL;
+                loadPage(p);
+            });
+            fullPrev.addEventListener('click',function(){
+                let p = current-1;
+                if(p<0) p=0;
+                loadPage(p);
+            });
+            fullNext.addEventListener('click',function(){
+                let p = current+1;
+                if(p>TOTAL) p=TOTAL;
+                loadPage(p);
+            });
+            exit.addEventListener('click',function(){
+                reader.classList.remove('full');
+            });
+            cardImg.src = 'bj.jpg';
+            cardImg.onerror = function(){
+                cardImg.alt = '封面缺失';
+            };
+        })();
+    </script>
+</body>
+</html>
